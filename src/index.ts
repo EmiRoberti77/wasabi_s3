@@ -2,6 +2,7 @@ import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
+  ListObjectsV2Command,
 } from '@aws-sdk/client-s3';
 import dotenv from 'dotenv';
 import { Readable } from 'stream';
@@ -62,5 +63,24 @@ const readFile = async () => {
   }
 };
 
+const getFilesList = async () => {
+  try {
+    const data = await s3Client.send(
+      new ListObjectsV2Command({
+        Bucket: bucketName,
+      })
+    );
+
+    if (data.Contents) {
+      data.Contents.forEach((file) => {
+        console.log(file);
+      });
+    }
+  } catch (err: any) {
+    console.log(err.message);
+  }
+};
+
 transfer();
 readFile();
+getFilesList();
